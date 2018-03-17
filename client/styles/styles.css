@@ -61,6 +61,7 @@ form input[type=text] {
 
 a:link, a:visited {
     color:black;
+    text-decoration: none;
 }
 
 .chat {

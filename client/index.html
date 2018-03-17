@@ -30,17 +30,14 @@
       <!-- Your HTML goes here! -->
         <div id="rooms"> Room: 
           <select id="roomSelect">
-            <option value='lobby' class="room">lobby</option>
-            <option value='trade' class="room">trade</option>            
+            <option value='newroom' class='room' id='createRoom'> Add a room...</option>                     
           </select>
         </div>
-
+        <form id="form">
           <input id="text" type="text" name="text">
-          <!--<input id="send" class="submit" name="submit">-->
-        <button id="submit">Submit</button>
-
+          <input id="submit" type="submit"></input>
+        </form>
     </div>
     <div id="chats"></div>
-    <script>app.init()</script>
   </body>
 </html>

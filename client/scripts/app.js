@@ -1,6 +1,5 @@
 $(document).ready( function() {
     app.init();
-
 });
 let app = {
 
@@ -8,9 +7,16 @@ let app = {
     
     currentRoom: 'lobby',
 
+    roomList: [],
+
+    rooms: {},
+
     init: function () {
         app.fetch();
         app.listeners();
+        for(let room of app.roomList) {
+            $("#roomSelect").append(`<option value=${room} class=${room}>${room}</option`);
+        }
     },
 
     send: function(message) {
@@ -33,14 +39,28 @@ let app = {
         $.ajax({
             url: app.server,
             type: 'GET',
+            data: "order=-createdAt",
             dataFilter: function(data) {
                 let datas = JSON.parse(data);
                 let messages = [];
+                // console.log('ggg')
                 for(let i = 0; i < datas.results.length;  i++){    
-                    if(datas.results[i].roomname === app.currentRoom){
+                    // if(datas.results[i].roomname === app.currentRoom){
                         messages.push(datas.results[i]);
+                    if (app.rooms[datas.results[i].roomname]) {
+                        app.rooms[datas.results[i].roomname].push(datas.results[i]);
+                    } else {
+                        app.rooms[datas.results[i].roomname] = [datas.results[i]];
+                    }
+                    if(!app.roomList.includes(datas.results[i].roomname)) {
+                        app.roomList.push(datas.results[i].roomname);
                     }
                 }
+                // for (let room of app.roomList) {
+
+                // }
+                $('#roomSelect').html('');
+                app.renderRoom();
                 messages.forEach(function(element) {
                     app.renderMessage(element);
                 });
@@ -48,6 +68,7 @@ let app = {
             },
             success: function (data) {
                 console.log('chatterbox: Message retrieved');
+                // app.renderRoom();
 
             },
             error: function (data) {
@@ -58,13 +79,16 @@ let app = {
     },
 
     clearMessages: function() {
-        $('#chats').html('');
+        $("#chats").html("");
     },
 
     renderMessage: function(messages) {
+        
         if (!messages) return;
-        $('#chats').prepend(`<div class="chat"><a href="#" class="username">${messages.username}</a><p>${messages.text}</p></div>`);
+        
+        $('#chats').append(`<div class="chat"><a href="#" class="username">${messages.username}</a><p>${messages.text}</p></div>`);
         $(".username").on("click", function(){
+         
           app.handleUsernameClick($(this));
         });
     },
@@ -72,7 +96,11 @@ let app = {
     renderRoom: function(room) {
         var div = $('<div></div>');
         div.text(room);
-        $('#roomSelect').append(div);
+        // $("#roomSelect").empty();
+        for ( let room of app.roomList ) {
+            $('#roomSelect').append(`<option value=${room}>${room}</option>`)
+        }
+        $("#roomSelect").append(`<option value="newroom">Add a room...</option>`)        
     },
 
     handleUsernameClick: function(user) {
@@ -80,31 +108,37 @@ let app = {
     },
 
     handleSubmit: function() {
+        console.log('===============================times')
         var output = {
             username: window.location.search.split('=').slice(-1)[0],
             text: $("#text").val(),
             roomname: $("#roomSelect").val(),
         };
+        console.log(output)
         app.send(output);
-        app.renderMessage();
+        $("#text").val("");
+        app.fetch();
     },
 
     listeners: function() {
-        $("#text").on("keypress", function(event) {
-            if (event.charCode === 13) {
-                app.handleSubmit();
-                $("#text").val("");
-            }
-        });
-        $("#submit").on("click", function(event) {
+        $("#form").submit(function(event) {
+            event.preventDefault();
+            console.log('here?')
             app.handleSubmit();
             $("#text").val("");
-        });
-        $("#roomSelect").on("click", function(event) {
-            app.currentRoom = $('.room').val();
             app.clearMessages();
-            app.fetch();
-        })
+        });
+        $("#roomSelect").on("change", function(event) {
+            app.currentRoom = $('#roomSelect').val();
+            console.log(event);
+            event.preventDefault();
+            if (app.currentRoom === 'newroom') {
+                app.currentRoom = prompt("Room name"); 
+            } else {
+                app.clearMessages();
+                app.fetch();
+            }
+        });
     }
 
 }
