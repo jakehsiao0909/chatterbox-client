@@ -59,6 +59,10 @@ form input[type=text] {
     padding: 5px;
 }
 
+a:link, a:visited {
+    color:black;
+}
+
 .chat {
     padding: 5px;
     margin-bottom: 5px;
@@ -86,5 +90,10 @@ form input[type=text] {
 .friend {
     color: #fff;
     background-color: #0090da;
+    font-weight: bold;
+}
+
+.friend a:link a:visited {
+    color: darkgoldenrod;
 }
 

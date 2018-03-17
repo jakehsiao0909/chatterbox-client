@@ -22,20 +22,22 @@
     <!-- your scripts -->
     <script src="env/config.js"></script>
     <script src="scripts/app.js"></script>
+    <script></script>
   </head>
   <body>
     <div id="main">
       <h1>chatterbox</h1>
       <!-- Your HTML goes here! -->
-        <span>Room: </span>
-        <select id="room">
-          <option value="newroom">New Room...</opttion>
-          <option value="lobby">Lobby</option>
-         </select>
+        <div id="rooms"> Room: 
+          <select id="roomSelect">
+            <option value='lobby'>lobby</option>
+          </select>
+        </div>
 
       <form action="" method="">
           <input id="text" type="text" name="text">
-        <button onclick="app.getMessage()">Submit</button>
+          <!--<input id="send" class="submit" name="submit">-->
+        <button onclick="app.handleSubmit()">Submit</button>
       </form>
 
     </div>

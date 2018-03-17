@@ -1,26 +1,16 @@
 $(document).ready( function() {
-    app.fetch();
+    app.init();
+
 });
 let app = {
 
     server: 'http://parse.atx.hackreactor.com/chatterbox/classes/messages',
     
     init: function () {
-        app.renderMessage();
-    },
-
-    getMessage: function() {
-        var output = {
-            username: "DefaultUser",
-            text: $("#text").val(),
-            roomname: $("#room").val(),
-        };
-        app.send(output);
-        app.renderMessages();
+        app.fetch();
     },
 
     send: function(message) {
-
         $.ajax({
             url: app.server,
             type: 'POST',
@@ -55,14 +45,34 @@ let app = {
     },
 
     clearMessages: function() {
-
+        $('#chats').html('');
     },
+
     renderMessage: function(messages) {
         if (!messages) return;
-        $('#chats').prepend(`<div class="chat"><p class="username">${messages.username}:</p><p>${messages.text}</p></div>`);
+        $('#chats').prepend(`<div class="chat"><a href="#" class="username">${messages.username}</a><p>${messages.text}</p></div>`);
+        $(".username").on("click", function(){
+          app.handleUsernameClick($(this));
+        });
     },
 
-    renderRoom: function() {
+    renderRoom: function(room) {
+        var div = $('<div></div>');
+        div.text(room);
+        $('#roomSelect').append(div);
+    },
 
-    }
+    handleUsernameClick: function(user) {
+        $(user).toggleClass(".friend");
+    },
+
+    handleSubmit: function() {
+        var output = {
+            username: "DefaultUser",
+            text: $("#text").val(),
+            roomname: $("#roomSelect").val(),
+        };
+        app.send(output);
+        app.renderMessages();
+    },
 }
