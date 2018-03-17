@@ -30,17 +30,17 @@
       <!-- Your HTML goes here! -->
         <div id="rooms"> Room: 
           <select id="roomSelect">
-            <option value='lobby'>lobby</option>
+            <option value='lobby' class="room">lobby</option>
+            <option value='trade' class="room">trade</option>            
           </select>
         </div>
 
-      <form action="" method="">
           <input id="text" type="text" name="text">
           <!--<input id="send" class="submit" name="submit">-->
-        <button onclick="app.handleSubmit()">Submit</button>
-      </form>
+        <button id="submit">Submit</button>
 
     </div>
     <div id="chats"></div>
+    <script>app.init()</script>
   </body>
 </html>

@@ -6,8 +6,11 @@ let app = {
 
     server: 'http://parse.atx.hackreactor.com/chatterbox/classes/messages',
     
+    currentRoom: 'lobby',
+
     init: function () {
         app.fetch();
+        app.listeners();
     },
 
     send: function(message) {
@@ -30,12 +33,22 @@ let app = {
         $.ajax({
             url: app.server,
             type: 'GET',
-            success: function (data) {
-                console.log('chatterbox: Message retrieved');
-                var array = data.results;
-                array.forEach(function(element) {
+            dataFilter: function(data) {
+                let datas = JSON.parse(data);
+                let messages = [];
+                for(let i = 0; i < datas.results.length;  i++){    
+                    if(datas.results[i].roomname === app.currentRoom){
+                        messages.push(datas.results[i]);
+                    }
+                }
+                messages.forEach(function(element) {
                     app.renderMessage(element);
                 });
+                return JSON.stringify(datas)
+            },
+            success: function (data) {
+                console.log('chatterbox: Message retrieved');
+
             },
             error: function (data) {
                 // See: https://developer.mozilla.org/en-US/docs/Web/API/console.error
@@ -68,11 +81,30 @@ let app = {
 
     handleSubmit: function() {
         var output = {
-            username: "DefaultUser",
+            username: window.location.search.split('=').slice(-1)[0],
             text: $("#text").val(),
             roomname: $("#roomSelect").val(),
         };
         app.send(output);
-        app.renderMessages();
+        app.renderMessage();
     },
+
+    listeners: function() {
+        $("#text").on("keypress", function(event) {
+            if (event.charCode === 13) {
+                app.handleSubmit();
+                $("#text").val("");
+            }
+        });
+        $("#submit").on("click", function(event) {
+            app.handleSubmit();
+            $("#text").val("");
+        });
+        $("#roomSelect").on("click", function(event) {
+            app.currentRoom = $('.room').val();
+            app.clearMessages();
+            app.fetch();
+        })
+    }
+
 }
