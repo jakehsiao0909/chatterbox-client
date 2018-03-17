@@ -61,6 +61,7 @@ let app = {
                 // }
                 $('#roomSelect').html('');
                 app.renderRoom();
+                $('#roomSelect').val(app.currentRoom);
                 messages.forEach(function(element) {
                     app.renderMessage(element);
                 });
@@ -112,7 +113,7 @@ let app = {
         var output = {
             username: window.location.search.split('=').slice(-1)[0],
             text: $("#text").val(),
-            roomname: $("#roomSelect").val(),
+            roomname: app.currentRoom,
         };
         console.log(output)
         app.send(output);
